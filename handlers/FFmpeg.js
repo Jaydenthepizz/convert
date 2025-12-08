@@ -81,6 +81,17 @@ async function init () {
 
   }
 
+  // ====== Manual fine-tuning ======
+
+  const prioritize = ["webm", "mp4", "gif"];
+  prioritize.reverse();
+
+  supportedFormats.sort((a, b) => {
+    const priorityIndexA = prioritize.indexOf(a.format);
+    const priorityIndexB = prioritize.indexOf(b.format);
+    return priorityIndexB - priorityIndexA;
+  });
+
   await ffmpeg.terminate();
 
 }

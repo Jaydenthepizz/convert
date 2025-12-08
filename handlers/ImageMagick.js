@@ -64,6 +64,17 @@ async function init () {
 
   }
 
+  // ====== Manual fine-tuning ======
+
+  const prioritize = ["png", "jpeg", "apng", "gif"];
+  prioritize.reverse();
+
+  supportedFormats.sort((a, b) => {
+    const priorityIndexA = prioritize.indexOf(a.format);
+    const priorityIndexB = prioritize.indexOf(b.format);
+    return priorityIndexB - priorityIndexA;
+  });
+
 }
 
 async function doConvert (inputFile, inputFormat, outputFormat) {
