@@ -172,7 +172,7 @@ class meydaHandler implements FormatHandler {
           const frameData = new Float32Array(bufferSize);
 
           for (let y = 0; y < imageHeight; y ++) {
-            const pixelIndex = (x + y * imageWidth) * 4;
+            const pixelIndex = (x + (imageHeight - y - 1) * imageWidth) * 4;
 
             // Extract amplitude from R and G channels
             const magInt = pixelBuffer[pixelIndex] + (pixelBuffer[pixelIndex + 1] << 8);
@@ -246,14 +246,15 @@ class meydaHandler implements FormatHandler {
           for (let j = 0; j < imageHeight; j ++) {
             const magnitude = Math.sqrt(real[j] * real[j] + imaginary[j] * imaginary[j]);
             const phase = Math.atan2(imaginary[j], real[j]);
+            const pixelIndex = (imageHeight - j - 1) * 4;
             // Encode magnitude in R, G channels
             const magInt = Math.floor(Math.min(magnitude * 65535, 65535));
-            pixels[j * 4] = magInt & 0xFF;
-            pixels[j * 4 + 1] = (magInt >> 8) & 0xFF;
+            pixels[pixelIndex] = magInt & 0xFF;
+            pixels[pixelIndex + 1] = (magInt >> 8) & 0xFF;
             // Encode phase in B channel
             const phaseNormalized = Math.floor(((phase + Math.PI) / (2 * Math.PI)) * 255);
-            pixels[j * 4 + 2] = phaseNormalized;
-            pixels[j * 4 + 3] = 0xFF;
+            pixels[pixelIndex + 2] = phaseNormalized;
+            pixels[pixelIndex + 3] = 0xFF;
           }
           const imageData = new ImageData(pixels as ImageDataArray, 1, imageHeight);
           this.#ctx.putImageData(imageData, i, 0);
